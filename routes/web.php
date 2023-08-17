@@ -17,20 +17,19 @@ Route::get('/auth/{provider}/redirect', function (string $provider) {
  
 Route::get('/auth/{provider}/callback', function (string $provider) {
     $providerUser = Socialite::driver($provider)->user();
-    
-    var_dump($providerUser);
-    // $user = User::updateOrCreate([
-    //     'github_id' => $githubUser->id,
-    // ], [
-    //     'name' => $githubUser->name,
-    //     'email' => $githubUser->email,
-    //     'github_token' => $githubUser->token,
-    //     'github_refresh_token' => $githubUser->refreshToken,
-    // ]);
 
-    // auth()->login($user, true);
+    $user = User::updateOrCreate([
+        'email' => $providerUser->email,
+    ], [
+        'provider_id' => $providerUser->id,
+        'name' => $providerUser->name,
+        'provider_avatar' => $providerUser->token,
+        'provider_name' => $provider,
+    ]);
 
-    // return redirect('/logged');
+    auth()->login($user, true);
+
+    return redirect('/logged');
     // // $user->token
 });
 
